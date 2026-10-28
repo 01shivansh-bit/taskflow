@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow - Minimalist To-Do</title>
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TaskFlow">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="app-title">TaskFlow</h1>
+          <p class="today-date" id="currentDate">Today</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- Google Drive Sync Button -->
+        <button id="gdriveBtn" class="gdrive-sync-btn" aria-label="Google Drive Sync" title="Sync with Google Drive">
+          <svg class="gdrive-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M8.2 3.8L1.5 15.3l3.8 6.7 6.7-11.5L8.2 3.8z" fill="#3b82f6"/>
+            <path d="M15.8 3.8H8.2l6.7 11.5h7.6L15.8 3.8z" fill="#10b981"/>
+            <path d="M22.5 15.3H7.5l-3.8 6.7h15l3.8-6.7z" fill="#f59e0b"/>
+          </svg>
+          <span class="gdrive-label" id="gdriveStatusText">Drive Sync</span>
+          <span class="sync-dot" id="gdriveSyncDot"></span>
+        </button>
+
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Statistics & Summary Section -->
+    <section class="stats-section" id="statsSection" aria-label="Task Statistics">
+      <div class="stats-grid">
+        <!-- Total Card -->
+        <div class="stat-card active" data-filter="all" role="button" tabindex="0" title="Filter by All tasks">
+          <div class="stat-header">
+            <span class="stat-label">Total</span>
+            <div class="stat-icon icon-total">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value" id="statValTotal">0</div>
+        </div>
+
+        <!-- Active Card -->
+        <div class="stat-card" data-filter="active" role="button" tabindex="0" title="Filter by Active tasks">
+          <div class="stat-header">
+            <span class="stat-label">Active</span>
+            <div class="stat-icon icon-active">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value" id="statValActive">0</div>
+        </div>
+
+        <!-- Overdue Card -->
+        <div class="stat-card" data-filter="overdue" id="statCardOverdue" role="button" tabindex="0" title="Filter by Overdue tasks">
+          <div class="stat-header">
+            <span class="stat-label">Overdue</span>
+            <div class="stat-icon icon-overdue">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value" id="statValOverdue">0</div>
+        </div>
+
+        <!-- Completed Card -->
+        <div class="stat-card" data-filter="completed" role="button" tabindex="0" title="Filter by Completed tasks">
+          <div class="stat-header">
+            <span class="stat-label">Done</span>
+            <div class="stat-icon icon-done">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value" id="statValCompleted">0</div>
+        </div>
+      </div>
+
+      <!-- Multi-Segment Health Bar -->
+      <div class="health-card">
+        <div class="health-header">
+          <span class="health-title">Task Health & Progress</span>
+          <span class="health-stats" id="progressStats">0% completed</span>
+        </div>
+        <div class="health-track" title="Health: Green (Done), Blue (Active), Red (Overdue)">
+          <div class="health-segment seg-completed" id="segCompleted" style="width: 0%;"></div>
+          <div class="health-segment seg-active" id="segActive" style="width: 0%;"></div>
+          <div class="health-segment seg-overdue" id="segOverdue" style="width: 0%;"></div>
+        </div>
+        <div class="health-legend">
+          <span class="legend-item"><span class="dot dot-completed"></span> Done</span>
+          <span class="legend-item"><span class="dot dot-active"></span> Active</span>
+          <span class="legend-item"><span class="dot dot-overdue"></span> Overdue</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add Task Card -->
+    <form id="addTodoForm" class="add-todo-form">
+      <div class="form-inputs">
+        <div class="input-wrapper title-wrapper">
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          <input 
+            type="text" 
+            id="todoInput" 
+            class="todo-input" 
+            placeholder="What needs to be done? Press Enter to add" 
+            autocomplete="off"
+            maxlength="250"
+            required
+          />
+        </div>
+        <div class="input-wrapper date-wrapper" title="Set optional due date">
+          <svg class="input-icon date-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <input 
+            type="date" 
+            id="dueDateInput" 
+            class="due-date-input" 
+            aria-label="Due date (optional)"
+          />
+        </div>
+      </div>
+      <button type="submit" class="btn-add" id="btnAdd">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Add</span>
+      </button>
+    </form>
+
+    <!-- Filters & Actions -->
+    <nav class="filter-bar">
+      <div class="filter-tabs">
+        <button class="filter-btn active" data-filter="all">
+          All <span class="badge" id="countAll">0</span>
+        </button>
+        <button class="filter-btn" data-filter="active">
+          Active <span class="badge" id="countActive">0</span>
+        </button>
+        <button class="filter-btn filter-btn-overdue" data-filter="overdue">
+          Overdue <span class="badge" id="countOverdue">0</span>
+        </button>
+        <button class="filter-btn" data-filter="completed">
+          Done <span class="badge" id="countCompleted">0</span>
+        </button>
+      </div>
+
+      <button id="clearCompletedBtn" class="btn-clear hidden" title="Clear completed tasks">
+        Clear completed
+      </button>
+    </nav>
+
+    <!-- Tasks List Container -->
+    <main class="todo-main">
+      <ul id="todoList" class="todo-list" aria-live="polite"></ul>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state hidden">
+        <div class="empty-icon" id="emptyIcon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h3 id="emptyTitle" class="empty-title">No tasks found</h3>
+        <p id="emptySubtext" class="empty-subtext">Add a task above to start planning your day.</p>
+      </div>
+    </main>
+
+    <!-- Footer summary -->
+    <footer class="app-footer">
+      <span id="itemsLeftCount">0 items remaining</span>
+      <span class="hint">Click task to toggle • Clean & fast</span>
+    </footer>
+  </div>
+
+  <!-- Google Drive Sync Modal -->
+  <div id="gdriveModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="gdriveModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M8.2 3.8L1.5 15.3l3.8 6.7 6.7-11.5L8.2 3.8z" fill="#3b82f6"/>
+            <path d="M15.8 3.8H8.2l6.7 11.5h7.6L15.8 3.8z" fill="#10b981"/>
+            <path d="M22.5 15.3H7.5l-3.8 6.7h15l3.8-6.7z" fill="#f59e0b"/>
+          </svg>
+          <h2 id="gdriveModalTitle" class="modal-title">Google Drive Sync</h2>
+        </div>
+        <button id="closeGdriveModal" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body" id="gdriveModalBody">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="assertive"></div>
+
+  <!-- Google Identity Services (GIS) & App Scripts -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="gdrive.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => {
+          console.warn('Service worker registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
+

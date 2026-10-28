@@ -1,0 +1,9 @@
+.git
+.gitignore
+.DS_Store
+*.md
+node_modules
+npm-debug.log
+scratch
+.system_generated
+

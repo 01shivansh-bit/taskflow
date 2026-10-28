@@ -1,0 +1,23 @@
+[
+  {
+    "id": "e07e837d-7e28-4410-9ccf-b89184744c3b",
+    "title": "bs grewal",
+    "completed": true,
+    "createdAt": "2026-10-28T07:31:55.661Z",
+    "dueDate": null
+  },
+  {
+    "id": "2",
+    "title": "Add your first task using the input above",
+    "completed": true,
+    "createdAt": "2026-10-28T09:05:00.000Z",
+    "dueDate": "2026-10-28"
+  },
+  {
+    "id": "3",
+    "title": "Try marking tasks complete or deleting them",
+    "completed": false,
+    "createdAt": "2026-10-28T09:10:00.000Z",
+    "dueDate": "2026-10-30"
+  }
+]
